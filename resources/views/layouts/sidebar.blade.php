@@ -86,7 +86,7 @@ function isActive($routeName)
   @can(['permission-edit', 'permission-list', 'permission-create', 'permission-delete'])
     <li class="nav-item {{ isActiveLI('permissions') }}">
       <a class="nav-link {{ isCollapsed('permissions') }}" href="{{ route('permissions.index') }}">
-        <i class="fas fa-user-shield"></i>
+        <i class="fas fa-shield-alt"></i>
         <span>Permission Management</span>
       </a>
     </li>

@@ -72,18 +72,20 @@
                           <a class="dropdown-item" href="{{ route('users.show', $user->id) }}"><i
                               class="fa fa-eye text-primary"></i> View</a>
                         @endcan
-                        @can('user-edit')
-                          <a class="dropdown-item" href="{{ route('users.edit', $user->id) }}"><i
-                              class="fa fa-pen text-warning"></i> Edit</a>
-                        @endcan
-                        @can('user-delete')
-                          <form action="{{ route('users.destroy', $user->id) }}"
-                            onsubmit="return confirm('Are you want to sure to delete?')" method="post">
-                            @csrf
-                            @method('delete')
-                            <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
-                          </form>
-                        @endcan
+                        @if (!$user->hasRole('Super Admin') || $user->id != Auth::user()->id)
+                          @can('user-edit')
+                            <a class="dropdown-item" href="{{ route('users.edit', $user->id) }}"><i
+                                class="fa fa-pen text-warning"></i> Edit</a>
+                          @endcan
+                          @can('user-delete')
+                            <form action="{{ route('users.destroy', $user->id) }}"
+                              onsubmit="return confirm('Are you want to sure to delete?')" method="post">
+                              @csrf
+                              @method('delete')
+                              <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
+                            </form>
+                          @endcan
+                        @endif
                       </div>
                     </div>
                   </td>

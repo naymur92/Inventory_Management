@@ -9,7 +9,7 @@
 @endpush
 
 @section('content')
-  <div class="container-fluid" style="min-height: 500px">
+  <div class="container-fluid">
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Create User</h1>
 
@@ -75,11 +75,12 @@
 
               <div class="form-group">
                 <label for="_role"><strong>Select Role:</strong></label>
-                <select name="roles[]" id="_role" class="form-control multiple @error('roles') is-invalid @enderror">
-                  <option value="" selected disabled>Select One</option>
+                <select name="roles[]" id="_role" class="form-control @error('roles') is-invalid @enderror" multiple>
+                  <option value="" selected disabled>Select One/Multiple</option>
 
                   @foreach ($roles as $item)
-                    <option value="{{ $item }}">{{ $item }}</option>
+                    <option value="{{ $item }}">
+                      {{ $item }}</option>
                   @endforeach
                 </select>
 
@@ -99,4 +100,5 @@
       </div>
 
     </div>
-  @endsection
+  </div>
+@endsection

@@ -63,8 +63,6 @@ class UserController extends Controller
       'roles' => 'required'
     ]);
 
-    // print_r($request->all());
-
     $input = $request->all();
     $input['password'] = Hash::make($input['password']);
 
@@ -72,9 +70,7 @@ class UserController extends Controller
     $user->assignRole($request->input('roles'));
 
     flash()->addSuccess('User Created');
-
     return redirect()->route('users.index');
-    // return redirect()->route('users.index')->with('success', 'User created successfully');
   }
 
   /**
@@ -85,7 +81,8 @@ class UserController extends Controller
    */
   public function show($id)
   {
-    //
+    $user = User::find($id);
+    return view('pages.users.show', compact('user'));
   }
 
   /**
@@ -96,7 +93,11 @@ class UserController extends Controller
    */
   public function edit($id)
   {
-    //
+    $user = User::find($id);
+    $roles = Role::pluck('name', 'name')->all();
+    $userRoles = $user->roles->pluck('name')->all();
+
+    return view('pages.users.edit', compact('user', 'roles', 'userRoles'));
   }
 
   /**
@@ -108,7 +109,27 @@ class UserController extends Controller
    */
   public function update(Request $request, $id)
   {
-    //
+    $request->validate([
+      'name' => 'required',
+      'email' => 'required|email|unique:users,email,' . $id,
+      'password' => 'same:confirm-password',
+      'roles' => 'required'
+    ]);
+
+    $input = $request->all();
+    if (!empty($input['password'])) {
+      $input['password'] = Hash::make($input['password']);
+    } else {
+      $input = Arr::except($input, array('password'));
+    }
+
+    $user = User::find($id);
+
+    $user->update($input);
+    DB::table('model_has_roles')->where('model_id', $id)->delete();
+
+    $user->assignRole($request->input('roles'));
+    return redirect()->route('users.index');
   }
 
   /**
