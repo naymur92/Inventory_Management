@@ -38,12 +38,12 @@ Route::group(['middleware' => ['auth']], function () {
 
   // Raw Materials
   Route::resource('/raw-materials', RawMaterialController::class);
-  Route::post('/raw-materials/get-item-types', [RawMaterialController::class, 'get_item_types'])->name('raw-materials.get-item-types');
-  Route::post('/raw-materials/store-request', [RawMaterialController::class, 'store_request'])->name('raw-materials.store-request');
-  Route::get('/raw-materials/queue-list', [RawMaterialController::class, 'queue_list'])->name('raw-materials.queue-list');
 
   // Raw material requests
   Route::resource('raw-material-requests', RawMaterialRequestController::class);
+  Route::post('/raw-material-requests/get-item-types', [RawMaterialRequestController::class, 'get_item_types']);
+  Route::get('/raw-mat-req/queue-list', [RawMaterialRequestController::class, 'queue_list'])->name('raw-material-requests.queue-list');
+  Route::put('/raw-mat-req/confirmation/{id}', [RawMaterialRequestController::class, 'confirmation'])->name('raw-material-requests.confirmation');
 
   // final module
   Route::resource('finish-modules', FinishModuleController::class);

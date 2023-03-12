@@ -116,6 +116,6 @@ class RoleController extends Controller
       $role->delete();
       flash()->addSuccess('Role Deleted');
     }
-    return back();
+    return redirect(route('roles.index'));
   }
 }

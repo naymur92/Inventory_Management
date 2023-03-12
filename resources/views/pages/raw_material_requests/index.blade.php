@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Inventory List')
+@section('title', 'Raw Material Request List')
 
 
 @push('styles')
@@ -20,14 +20,14 @@
 @section('content')
   <div class="container-fluid">
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Raw Material Queue</h1>
+    <h1 class="h3 mb-2 text-gray-800">Raw Material Request</h1>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3 d-flex justify-content-between">
-        <h5 class="m-0 font-weight-bold text-primary">Raw Material Request Queue List</h5>
+        <h5 class="m-0 font-weight-bold text-primary">Raw Material Request List</h5>
         @can('raw-req-create')
-          <a href="{{ route('raw-materials.create') }}" class="btn btn-primary">Request Raw Material</a>
+          <a href="{{ route('raw-material-requests.create') }}" class="btn btn-primary">Create A Request</a>
         @endcan
       </div>
       <div class="card-body">
@@ -39,6 +39,7 @@
                 <th>Type</th>
                 <th>Quantity</th>
                 <th>Requested By</th>
+                <th>Status</th>
                 <th>Created At</th>
                 <th>Action</th>
               </tr>
@@ -49,6 +50,7 @@
                 <th>Type</th>
                 <th>Quantity</th>
                 <th>Requested By</th>
+                <th>Status</th>
                 <th>Created At</th>
                 <th>Action</th>
               </tr>
@@ -56,10 +58,26 @@
             <tbody>
               @foreach ($raw_mat_reqs as $item)
                 <tr>
-                  <td>{{ $item->material_name }}</td>
-                  <td>{{ $item->material_type }}</td>
-                  <td>{{ $item->material_quantity }} ({{ $item->quantity_unit }})</td>
-                  <td>{{ $item->material_quantity }} ({{ $item->quantity_unit }})</td>
+                  <td>{{ $item->raw_material->material_name }}</td>
+                  <td>{{ $item->raw_material->material_type }}</td>
+                  <td>{{ $item->raw_material_quantity }} ({{ $item->raw_material->quantity_unit }})</td>
+                  <td>
+                    <strong>Name: </strong>{{ $item->requested_user->name }} <br>
+                    <strong>Email: </strong>{{ $item->requested_user->email }}
+                  </td>
+                  <td>
+                    @if (count($item->req_confirmations) > 0)
+                      <ul>
+                        @foreach ($item->req_confirmations as $i)
+                          <li>{{ $i->user->name }} - <label
+                              class="badge badge-{{ $class_names[$i->status] }}">{{ $status[$i->status] }}</label>
+                          </li>
+                        @endforeach
+                      </ul>
+                    @else
+                      <label class="badge badge-danger">No Role Assigned</label>
+                    @endif
+                  </td>
                   <td>{{ date('d M, Y - h:i a', strtotime($item->created_at)) }}</td>
                   <td>
                     <div class="dropdown">
@@ -68,24 +86,29 @@
                         Action
                       </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('raw-materials.show', $item->id) }}"><i
+                        <a class="dropdown-item" href="{{ route('raw-material-requests.show', $item->id) }}"><i
                             class="fa fa-eye text-primary"></i> View</a>
-                        {{-- <a class="dropdown-item" href="{{ route('raw-materials.edit', $item->id) }}"><i
-                            class="fa fa-pen text-warning"></i> Edit</a> --}}
                         @can('raw-req-edit')
-                          <form action="{{ route('raw-material-requests.update', $item->id) }}" method="post">
-                            @csrf
-                            @method('put')
-                            <button class="dropdown-item"><i class="fa fa-check text-success"></i> Confirm</button>
-                          </form>
+                          <a class="dropdown-item" href="{{ route('raw-material-requests.edit', $item->id) }}"><i
+                              class="fa fa-pen text-warning"></i> Edit</a>
                         @endcan
                         @can('raw-req-delete')
-                          <form action="{{ route('raw-materials.destroy', $item->id) }}"
-                            onsubmit="return confirm('Are you want to sure to delete?')" method="post">
-                            @csrf
-                            @method('delete')
-                            <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
-                          </form>
+                          <?php
+                          $confirmation = true;
+                          foreach ($item->req_confirmations as $i) {
+                              if ($i->status != 1) {
+                                  $confirmation = false;
+                              }
+                          }
+                          ?>
+                          @if (!$confirmation)
+                            <form action="{{ route('raw-material-requests.destroy', $item->id) }}"
+                              onsubmit="return confirm('Are you want to sure to delete?')" method="post">
+                              @csrf
+                              @method('delete')
+                              <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
+                            </form>
+                          @endif
                         @endcan
                       </div>
                     </div>

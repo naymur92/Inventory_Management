@@ -1,10 +1,10 @@
 <?php
 // set collapsed class
-function isCollapsed($controllerName)
+function isCollapsed(array $controllerNameArray)
 {
     $c_con_array = explode('.', Route::currentRouteName());
     $current_controller = $c_con_array[0];
-    if ($current_controller != $controllerName) {
+    if (!in_array($current_controller, $controllerNameArray)) {
         echo 'collapsed';
     }
 }
@@ -57,9 +57,9 @@ function isActive($routeName)
 
 
   {{-- Nav item -users --}}
-  @can(['user-edit', 'user-list', 'user-create', 'user-delete'])
+  @canany(['user-edit', 'user-list', 'user-create', 'user-delete'])
     <li class="nav-item {{ isActiveLI('users') }}">
-      <a class="nav-link {{ isCollapsed('users') }}" href="#" data-toggle="collapse" data-target="#userMenu"
+      <a class="nav-link {{ isCollapsed(['users']) }}" href="#" data-toggle="collapse" data-target="#userMenu"
         aria-expanded="true" aria-controls="userMenu">
         <i class="fas fa-user"></i>
         <span>Users</span>
@@ -68,10 +68,10 @@ function isActive($routeName)
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">User Components:</h6>
-          @can(['user-edit', 'user-list', 'user-delete'])
+          @canany(['user-edit', 'user-list', 'user-delete'])
             <a class="collapse-item {{ isActive('users.index') }}" href="{{ route('users.index') }}"><i
                 class="fas fa-list mr-2 text-primary"></i>Users List</a>
-          @endcan
+          @endcanany
           @can('user-create')
             <a class="collapse-item {{ isActive('users.create') }}" href="{{ route('users.create') }}"><i
                 class="fas fa-plus-square mr-2 text-success"></i>Add User</a>
@@ -79,54 +79,79 @@ function isActive($routeName)
         </div>
       </div>
     </li>
-  @endcan
+  @endcanany
 
 
   {{-- Nav item -permission management --}}
-  @can(['permission-edit', 'permission-list', 'permission-create', 'permission-delete'])
+  @canany(['permission-edit', 'permission-list', 'permission-create', 'permission-delete'])
     <li class="nav-item {{ isActiveLI('permissions') }}">
-      <a class="nav-link {{ isCollapsed('permissions') }}" href="{{ route('permissions.index') }}">
+      <a class="nav-link {{ isCollapsed(['permissions']) }}" href="{{ route('permissions.index') }}">
         <i class="fas fa-shield-alt"></i>
         <span>Permission Management</span>
       </a>
     </li>
-  @endcan
+  @endcanany
 
 
   {{-- Nav item -role managements --}}
-  @can(['role-edit', 'role-list', 'role-create', 'role-delete'])
+  @canany(['role-edit', 'role-list', 'role-create', 'role-delete'])
     <li class="nav-item {{ isActiveLI('roles') }}">
-      <a class="nav-link {{ isCollapsed('roles') }}" href="{{ route('roles.index') }}">
+      <a class="nav-link {{ isCollapsed(['roles']) }}" href="{{ route('roles.index') }}">
         <i class="fas fa-user-shield"></i>
         <span>Role Management</span>
       </a>
     </li>
-  @endcan
+  @endcanany
 
   {{-- Nav item - Raw Materials --}}
-  <li class="nav-item {{ isActiveLI('raw-materials') }}">
-    <a class="nav-link {{ isCollapsed('raw-materials') }}" href="#" data-toggle="collapse"
-      data-target="#rawMaterialsMenu" aria-expanded="true" aria-controls="rawMaterialsMenu">
-      <i class="fas fa-tools"></i>
-      <span>Raw Materials</span>
-    </a>
-    <div id="rawMaterialsMenu" class="collapse {{ isShow('raw-materials') }}" aria-labelledby="headingTwo"
-      data-parent="#accordionSidebar">
-      <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Raw Material Components:</h6>
-        <a class="collapse-item {{ isActive('raw-materials.index') }}" href="{{ route('raw-materials.index') }}"><i
-            class="fas fa-warehouse mr-2 text-primary"></i>Inventory</a>
-        <a class="collapse-item {{ isActive('raw-materials.create') }}" href="{{ route('raw-materials.create') }}"><i
-            class="fas fa-plus mr-2 text-primary"></i>Request Raw Material</a>
-        <a class="collapse-item {{ isActive('raw-materials.queue-list') }}"
-          href="{{ route('raw-materials.queue-list') }}"><i class="fas fa-list mr-2 text-success"></i>Queue List</a>
+  @canany(['material-edit', 'material-list', 'material-create', 'material-delete', 'raw-req-list', 'raw-req-create',
+    'raw-req-edit', 'raw-req-delete', 'raw-req-confirm'])
+    <li class="nav-item {{ isActiveLI('raw-materials') }} {{ isActiveLI('raw-material-requests') }}">
+      <a class="nav-link {{ isCollapsed(['raw-materials', 'raw-material-requests']) }}" href="#"
+        data-toggle="collapse" data-target="#rawMaterialsMenu" aria-expanded="true" aria-controls="rawMaterialsMenu">
+        <i class="fas fa-tools"></i>
+        <span>Raw Materials</span>
+      </a>
+      <div id="rawMaterialsMenu" class="collapse {{ isShow('raw-materials') }} {{ isShow('raw-material-requests') }}"
+        aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Raw Material Components:</h6>
+
+          {{-- Check Raw Material Component permissions --}}
+          @canany(['material-edit', 'material-list', 'material-create', 'material-delete'])
+            <a class="collapse-item {{ isActive('raw-materials.index') }}" href="{{ route('raw-materials.index') }}"><i
+                class="fas fa-warehouse mr-2 text-primary"></i>Inventory</a>
+          @endcanany
+
+          {{-- check raw mat request permissions --}}
+          @canany(['raw-req-edit', 'raw-req-list', 'raw-req-create', 'raw-req-delete'])
+            @can('raw-req-create')
+              <a class="collapse-item {{ isActive('raw-material-requests.create') }}"
+                href="{{ route('raw-material-requests.create') }}"><i
+                  class="fas fa-plus-square mr-2 text-success"></i>Request Raw
+                Material</a>
+            @endcan
+            @can('raw-req-list')
+              <a class="collapse-item {{ isActive('raw-material-requests.index') }}"
+                href="{{ route('raw-material-requests.index') }}"><i class="fa fa-list mr-2 text-primary"></i>Requests
+                List</a>
+            @endcan
+          @endcanany
+
+          {{-- users only have raw-req-confirm and raw-req-delete permissions can show this --}}
+          @canany(['raw-req-confirm'])
+            <a class="collapse-item {{ isActive('raw-material-requests.queue-list') }}"
+              href="{{ route('raw-material-requests.queue-list') }}"><i class="fas fa-list mr-2 text-warning"></i>Queue
+              List</a>
+          @endcanany
+        </div>
       </div>
-    </div>
-  </li>
+    </li>
+  @endcanany
 
   {{-- Nav item - Finish Modules --}}
   <li class="nav-item {{ isActiveLI('finish-modules') }}">
-    <a class="nav-link {{ isCollapsed('finish-modules') }}" href="#" data-toggle="collapse"
+    <a class="nav-link {{ isCollapsed(['finish-modules']) }}" href="#" data-toggle="collapse"
       data-target="#finishModulesMenu" aria-expanded="true" aria-controls="finishModulesMenu">
       <i class="fas fa-check"></i>
       <span>Finish Modules</span>

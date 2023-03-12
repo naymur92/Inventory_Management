@@ -2,10 +2,8 @@
 
 @section('title', 'Inventory List')
 
-
 @push('styles')
   <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-
   <style>
     .generated-field {
       position: relative;
@@ -33,8 +31,12 @@
       $('.add-more-btn').click(function(event) {
         event.preventDefault();
 
+        var req_handler_field = $('#req_handler_role_field').html();
+
         var fieldHTML =
-          "<div class='row mt-2 generated-field'><div class='col-5'><input type='text' name='material_name[]' class='form-control' placeholder='Bottle, Label, Oil etc.' required></div><div class='col-5'><input type='text' name='material_type[]' class='form-control' placeholder='1ltr, 5ltr, soyabean, palm etc' required></div><div class='col-2'><select name='quantity_unit[]' class='form-control' required><option value='' selected disabled>Select One</option><option value='piece'>piece</option><option value='kg'>kg</option></select></div><i class='fa fa-times text-danger item-close-btn'></i></div>";
+          "<div class='row mt-2 generated-field'><div class='col-3'><input type='text' name='material_name[]' class='form-control' placeholder='Bottle, Label, Oil etc.' required></div><div class='col-4'><input type='text' name='material_type[]' class='form-control' placeholder='1ltr, 5ltr, soyabean, palm etc' required></div><div class='col-2'><select name='quantity_unit[]' class='form-control' required><option value='' selected disabled>Select One</option><option value='piece'>piece</option><option value='kg'>kg</option></select></div><div class='col-3'>" +
+          req_handler_field +
+          "</div><i class='fa fa-times text-danger item-close-btn'></i></div>";
 
         $('.form-body').append(fieldHTML);
 
@@ -89,73 +91,83 @@
     <h1 class="h3 mb-2 text-gray-800">Inventory</h1>
 
     <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-      <div class="card-header py-3 d-flex justify-content-between">
-        <h5 class="m-0 font-weight-bold text-primary">Raw Material List</h5>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Add Raw Material</button>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Quantity</th>
-                <th>Created At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Quantity</th>
-                <th>Created At</th>
-                <th>Action</th>
-              </tr>
-            </tfoot>
-            <tbody>
-              @foreach ($raw_materials as $item)
-                <tr>
-                  <td>{{ $item->material_name }}</td>
-                  <td>{{ $item->material_type }}</td>
-                  <td>{{ $item->material_quantity }} ({{ $item->quantity_unit }})</td>
-                  <td>{{ date('d M, Y - h:i a', strtotime($item->created_at)) }}</td>
-                  <td>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Action
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        {{-- <a class="dropdown-item" href="{{ route('raw-materials.show', $item->id) }}"><i
-                            class="fa fa-eye text-primary"></i> View</a> --}}
-                        {{-- <a class="dropdown-item" href="{{ route('raw-materials.edit', $item->id) }}"><i
-                            class="fa fa-pen text-warning"></i> Edit</a> --}}
-                        <form action="{{ route('raw-materials.destroy', $item->id) }}"
-                          onsubmit="return confirm('Are you want to sure to delete?')" method="post">
-                          @csrf
-                          @method('delete')
-                          <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
-                        </form>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
+    <div class="row justify-content-center">
+      <div class="col-8">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3 d-flex justify-content-between">
+            <h5 class="m-0 font-weight-bold text-primary">Raw Material List</h5>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Add Raw Material</button>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  @foreach ($raw_materials as $item)
+                    <tr>
+                      <td>{{ $item->material_name }}</td>
+                      <td>{{ $item->material_type }}</td>
+                      <td>{{ $item->material_quantity }} ({{ $item->quantity_unit }})</td>
+                      <td>{{ date('d M, Y - h:i a', strtotime($item->created_at)) }}</td>
+                      <td>
+                        <div class="dropdown">
+                          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {{-- @can('material-list')
+                              <a class="dropdown-item" href="{{ route('raw-materials.show', $item->id) }}"><i
+                                  class="fa fa-eye text-primary"></i> View</a>
+                            @endcan --}}
+                            {{-- @can('material-edit')
+                              <a class="dropdown-item" href="{{ route('raw-materials.edit', $item->id) }}"><i
+                                  class="fa fa-pen text-warning"></i> Edit</a>
+                            @endcan --}}
+                            @can('material-delete')
+                              <form action="{{ route('raw-materials.destroy', $item->id) }}"
+                                onsubmit="return confirm('Are you want to sure to delete?')" method="post">
+                                @csrf
+                                @method('delete')
+                                <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
+                              </form>
+                            @endcan
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-  </div>
 
+  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 60vw">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 70vw">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Raw Material Add Form</h5>
@@ -169,26 +181,29 @@
 
             {{-- This is for header --}}
             <div class="row">
-              <div class="col-5">
+              <div class="col-3">
                 <label><strong>Material Name</strong></label>
               </div>
-              <div class="col-5">
+              <div class="col-4">
                 <label><strong>Material Type</strong></label>
               </div>
               <div class="col-2">
                 <label><strong>Material Unit</strong></label>
+              </div>
+              <div class="col-3">
+                <label><strong>Request Handler Role</strong></label>
               </div>
             </div>
 
             {{-- this is form body --}}
             <div class="form-body">
               <div class="row">
-                <div class="col-5">
+                <div class="col-3">
                   <input type="text" name="material_name[]" class="form-control" placeholder="Bottle, Label, Oil etc."
                     required>
 
                 </div>
-                <div class="col-5">
+                <div class="col-4">
                   <input type="text" name="material_type[]" class="form-control"
                     placeholder="1ltr, 5ltr, soyabean, palm etc" required>
 
@@ -199,7 +214,14 @@
                     <option value="piece">piece</option>
                     <option value="kg">kg</option>
                   </select>
-
+                </div>
+                <div class="col-3" id="req_handler_role_field">
+                  <select name="req_handler_role[]" class="form-control" required>
+                    <option value="" selected disabled>Select One</option>
+                    @foreach ($roles as $item)
+                      <option value="{{ $item }}">{{ $item }}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
             </div>
@@ -210,8 +232,8 @@
             </div>
 
             {{-- errors area --}}
-            <ul id="errors" class="text-danger my-2">
-            </ul>
+            <ul id="errors" class="text-danger my-2"></ul>
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

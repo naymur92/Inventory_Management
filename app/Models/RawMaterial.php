@@ -9,7 +9,7 @@ class RawMaterial extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['material_name', 'material_type', 'material_quantity', 'quantity_unit'];
+    protected $fillable = ['material_name', 'material_type', 'material_quantity', 'quantity_unit', 'req_handler_role'];
 
     public function requests()
     {

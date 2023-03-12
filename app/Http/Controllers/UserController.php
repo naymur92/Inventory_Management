@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use DB;
-use Hash;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -44,7 +44,6 @@ class UserController extends Controller
   public function create()
   {
     $roles = Role::pluck('name', 'name')->all();
-    // print_r($roles);
     return view('pages.users.create', compact('roles'));
   }
 
@@ -140,6 +139,11 @@ class UserController extends Controller
    */
   public function destroy($id)
   {
-    //
+    $user = User::findOrFail($id);
+
+    $user->delete();
+
+    flash()->addSuccess('User Deleted');
+    return redirect(route('users.index'));
   }
 }

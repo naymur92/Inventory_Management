@@ -15,7 +15,7 @@
         // csrf bind
         var token = $("meta[name='csrf-token']").attr("content");
 
-        $.post("/raw-materials/get-item-types", {
+        $.post("/raw-material-requests/get-item-types", {
             material_name: val,
             _token: token
           },
@@ -45,7 +45,6 @@
       // call function 
       get_types();
 
-
       $('#_name').on('change', function() {
         get_types();
       });
@@ -63,7 +62,9 @@
         <div class="card shadow mb-4">
           <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h5 class="m-0 font-weight-bold text-primary">Raw Material Request Form</h5>
-            {{-- <a href="{{ route('raw-materials.queue-list') }}" class="btn btn-outline-warning">Back</a> --}}
+            @can('raw-req-list')
+              <a href="{{ route('raw-material-requests.index') }}" class="btn btn-outline-warning">Back</a>
+            @endcan
           </div>
 
           <form action="{{ route('raw-material-requests.store') }}" method="POST">

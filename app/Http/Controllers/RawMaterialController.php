@@ -4,9 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\RawMaterial;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class RawMaterialController extends Controller
 {
+
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  function __construct()
+  {
+    $this->middleware('permission:material-list', ['only' => ['index', 'show']]);
+    $this->middleware('permission:material-create', ['only' => ['create', 'store']]);
+    $this->middleware('permission:material-edit', ['only' => ['edit', 'update']]);
+    $this->middleware('permission:material-delete', ['only' => ['destroy']]);
+  }
   /**
    * Display a listing of the resource.
    *
@@ -15,22 +29,11 @@ class RawMaterialController extends Controller
   public function index()
   {
     $raw_materials = RawMaterial::orderBy('created_at', 'desc')->get();
-    return view('pages.raw_materials.index', compact('raw_materials'));
+    $roles = Role::pluck('name', 'name')->all();
+
+    return view('pages.raw_materials.index', compact('raw_materials', 'roles'));
   }
 
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-
-  //  create raw material request
-  public function create()
-  {
-    $item_list = RawMaterial::select('material_name')->groupBy('material_name')->get();
-
-    return view('pages.raw_materials.create', compact('item_list'));
-  }
 
   /**
    * Store a newly created resource in storage.
@@ -53,15 +56,15 @@ class RawMaterialController extends Controller
       }
     }
 
-
     if (count($errors) == 0) {
       for ($i = 0; $i < $field_length; $i++) {
         $rawMaterial = new RawMaterial();
 
-        $rawMaterial->material_name = trim($request->material_name[$i]);
-        $rawMaterial->material_type = trim($request->material_type[$i]);
+        $rawMaterial->material_name = ucwords(trim($request->material_name[$i]));
+        $rawMaterial->material_type = strtolower(trim($request->material_type[$i]));
         $rawMaterial->material_quantity = 0;
-        $rawMaterial->quantity_unit = trim($request->quantity_unit[$i]);
+        $rawMaterial->quantity_unit = strtolower(trim($request->quantity_unit[$i]));
+        $rawMaterial->req_handler_role = trim($request->req_handler_role[$i]);
 
         $rawMaterial->save();
       }
@@ -126,14 +129,6 @@ class RawMaterialController extends Controller
 
     flash()->addSuccess('Item Deleted');
 
-    return back();
-  }
-
-  // get material item based on name
-  public function get_item_types(Request $request)
-  {
-    $item_types = RawMaterial::where('material_name', $request->material_name)->select('material_type')->get();
-    $unit = RawMaterial::where('material_name', $request->material_name)->select('quantity_unit')->first();
-    return response()->json(['success' => true, 'types' => $item_types, 'unit' => $unit->quantity_unit]);
+    return redirect(route('raw-materials.index'));
   }
 }

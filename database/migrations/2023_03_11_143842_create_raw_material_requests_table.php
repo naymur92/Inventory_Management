@@ -18,10 +18,12 @@ class CreateRawMaterialRequestsTable extends Migration
             $table->unsignedBigInteger('raw_material_id');
             $table->unsignedBigInteger('raw_material_quantity');
             $table->unsignedBigInteger('requested_by');
+            $table->unsignedBigInteger('cancelled_by')->nullable();
             $table->timestamps();
 
             $table->foreign('raw_material_id')->references('id')->on('raw_materials')->onDelete('cascade');
             $table->foreign('requested_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('cancelled_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

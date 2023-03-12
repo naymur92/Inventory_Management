@@ -58,7 +58,7 @@
         <div class="card shadow mb-4">
           <div class="card-header py-3 d-flex justify-content-between">
             <h5 class="m-0 font-weight-bold text-primary">Permissions List</h5>
-            @can('role-create')
+            @can('permission-create')
               <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Create New Role</button>
             @endcan
           </div>
@@ -88,7 +88,7 @@
                       <td>{{ $i++ }}</td>
                       <td>{{ $item->name }}</td>
                       <td>
-                        @can('role-delete')
+                        @can('permission-delete')
                           <form action="{{ route('permissions.destroy', $item->id) }}"
                             onsubmit="return confirm('Are you want to sure to delete?')" method="post">
                             @csrf
