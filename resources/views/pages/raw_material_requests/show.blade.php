@@ -17,7 +17,7 @@
       <div class="col-6">
         <div class="card shadow mb-4">
           <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h5 class="m-0 font-weight-bold text-primary">{{ $raw_mat_req->raw_material->material_name }}</h5>
+            <h5 class="m-0 font-weight-bold text-primary">Request Details</h5>
             @can('raw-req-list')
               <a href="{{ route('raw-material-requests.index') }}" class="btn btn-outline-warning">Back</a>
             @endcan
@@ -67,32 +67,30 @@
                   </td>
                 </tr>
               @endif
-
               <tr>
             </table>
           </div>
-          <div class="card-footer d-flex justify-content-between">
-            @can('raw-req-delete')
-              <?php
-              $confirmation = true;
-              foreach ($raw_mat_req->req_confirmations as $i) {
-                  if ($i->status != 1) {
-                      $confirmation = false;
-                  }
-              }
-              ?>
 
-              @if (!$confirmation)
+          <?php
+          $confirmation = true;
+          foreach ($raw_mat_req->req_confirmations as $i) {
+              if ($i->status != 1) {
+                  $confirmation = false;
+              }
+          }
+          ?>
+          @if (!$confirmation)
+            <div class="card-footer">
+              @can('raw-req-delete')
                 <form action="{{ route('raw-material-requests.destroy', $raw_mat_req->id) }}"
                   onsubmit="return confirm('Are you want to sure to delete?')" method="post">
                   @csrf
                   @method('delete')
                   <button class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
                 </form>
-              @endif
-
-            @endcan
-          </div>
+              @endcan
+            </div>
+          @endif
         </div>
       </div>
 

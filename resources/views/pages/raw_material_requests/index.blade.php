@@ -88,28 +88,25 @@
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ route('raw-material-requests.show', $item->id) }}"><i
                             class="fa fa-eye text-primary"></i> View</a>
-                        @can('raw-req-edit')
-                          <a class="dropdown-item" href="{{ route('raw-material-requests.edit', $item->id) }}"><i
-                              class="fa fa-pen text-warning"></i> Edit</a>
-                        @endcan
-                        @can('raw-req-delete')
-                          <?php
-                          $confirmation = true;
-                          foreach ($item->req_confirmations as $i) {
-                              if ($i->status != 1) {
-                                  $confirmation = false;
-                              }
-                          }
-                          ?>
-                          @if (!$confirmation)
+
+                        <?php
+                        $confirmation = true;
+                        foreach ($item->req_confirmations as $i) {
+                            if ($i->status != 1) {
+                                $confirmation = false;
+                            }
+                        }
+                        ?>
+                        @if (!$confirmation)
+                          @can('raw-req-delete')
                             <form action="{{ route('raw-material-requests.destroy', $item->id) }}"
                               onsubmit="return confirm('Are you want to sure to delete?')" method="post">
                               @csrf
                               @method('delete')
                               <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
                             </form>
-                          @endif
-                        @endcan
+                          @endcan
+                        @endif
                       </div>
                     </div>
                   </td>

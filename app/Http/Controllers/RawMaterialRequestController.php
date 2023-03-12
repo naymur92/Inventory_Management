@@ -109,18 +109,6 @@ class RawMaterialRequestController extends Controller
   }
 
   /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  \App\Models\RawMaterialRequest  $rawMaterialRequest
-   * @return \Illuminate\Http\Response
-   */
-  public function update(Request $request, RawMaterialRequest $rawMaterialRequest)
-  {
-    //
-  }
-
-  /**
    * Remove the specified resource from storage.
    *
    * @param  \App\Models\RawMaterialRequest  $rawMaterialRequest
