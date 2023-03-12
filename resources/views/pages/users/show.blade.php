@@ -9,7 +9,7 @@
 @endpush
 
 @section('content')
-  <div class="container-fluid" style="min-height: 500px">
+  <div class="container-fluid">
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Show User</h1>
 
@@ -81,4 +81,5 @@
       </div>
 
     </div>
-  @endsection
+  </div>
+@endsection

@@ -14,6 +14,65 @@
 
   <!-- Page level custom scripts -->
   <script src="/assets/js/demo/datatables-demo.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      // submit form
+      $('#submit-btn').click(function(e) {
+        e.preventDefault();
+
+        let myform = document.getElementById('role_insert_form');
+        let formData = new FormData(myform);
+
+        $('#_name').removeClass('border-danger');
+
+        $.ajax({
+          url: "/roles",
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType: false,
+          type: 'POST',
+          success: function(response) {
+            // console.log(response)
+            if (response.success) {
+              location.reload();
+            }
+          }
+        }).fail(function(jqXHR, textStatus, error) {
+          // get errors list
+          let errors = jQuery.parseJSON(jqXHR.responseText).errors;
+
+          // convert object to array
+          let errorsArray = Object.keys(errors).map(function(key) {
+            return errors[key];
+          });
+          // console.log(errors);
+
+          // add css to field
+          if (errors.name) {
+            $('#_name').addClass('border-danger');
+          }
+          if (errors.permission) {
+            $('.permissions').css({
+              'border': '1px solid red',
+              'padding': '5px',
+              'borderRadius': '5px'
+            });
+          }
+
+          // clear type list
+          $('#errors').html('');
+          // generate errors
+          var content = '';
+          errorsArray.forEach(element => {
+            content += '<li>' + element[0] + '</li>';
+          });
+          $('#errors').html(content);
+        });
+      });
+    });
+  </script>
 @endpush
 
 
@@ -65,21 +124,23 @@
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('role-list')
-                              <a class="dropdown-item" href="{{ route('raw-materials.show', $item->id) }}"><i
+                              <a class="dropdown-item" href="{{ route('roles.show', $item->id) }}"><i
                                   class="fa fa-eye text-primary"></i> View</a>
                             @endcan
                             @can('role-edit')
-                              <a class="dropdown-item" href="{{ route('raw-materials.edit', $item->id) }}"><i
+                              <a class="dropdown-item" href="{{ route('roles.edit', $item->id) }}"><i
                                   class="fa fa-pen text-warning"></i> Edit</a>
                             @endcan
-                            @can('role-delete')
-                              <form action="{{ route('raw-materials.destroy', $item->id) }}"
-                                onsubmit="return confirm('Are you want to sure to delete?')" method="post">
-                                @csrf
-                                @method('delete')
-                                <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
-                              </form>
-                            @endcan
+                            @if ($item->name != 'Super Admin')
+                              @can('role-delete')
+                                <form action="{{ route('roles.destroy', $item->id) }}"
+                                  onsubmit="return confirm('Are you want to sure to delete?')" method="post">
+                                  @csrf
+                                  @method('delete')
+                                  <button class="dropdown-item"><i class="fa fa-trash text-danger"></i> Delete</button>
+                                </form>
+                              @endcan
+                            @endif
                           </div>
                         </div>
                       </td>
@@ -104,7 +165,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form id="raw_insert_form" action="{{ route('roles.store') }}" method="post">
+        <form id="role_insert_form" action="{{ route('roles.store') }}" method="post">
           <div class="modal-body">
             @csrf
 
@@ -115,18 +176,24 @@
             </div>
 
             <div class="form-group">
-              <label for="_permission" class="mb-3"><strong>Select Permissions:</strong></label>
+              <label class="mb-3"><strong>Select Permissions:</strong></label>
               <br>
 
-              @foreach ($permissions as $item)
-                <label>
-                  <input type="checkbox" name="permission[]" value="{{ $item->id }}">
-                  {{ $item->name }}
-                </label>
-                <br>
-              @endforeach
+              <div class="permissions">
+                @foreach ($permissions as $item)
+                  <label>
+                    <input type="checkbox" name="permission[]" value="{{ $item->id }}">
+                    {{ $item->name }}
+                  </label>
+                  <br>
+                @endforeach
+              </div>
+
             </div>
 
+            {{-- errors area --}}
+            <ul id="errors" class="text-danger my-2">
+            </ul>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -137,6 +204,4 @@
       </div>
     </div>
   </div>
-
-
 @endsection

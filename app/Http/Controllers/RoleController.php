@@ -35,16 +35,6 @@ class RoleController extends Controller
   }
 
   /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function create()
-  {
-    //
-  }
-
-  /**
    * Store a newly created resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
@@ -62,7 +52,7 @@ class RoleController extends Controller
 
     flash()->addSuccess('Role Added');
 
-    return redirect()->route('roles.index');
+    return response()->json(['success' => true]);
   }
 
   /**
@@ -73,7 +63,7 @@ class RoleController extends Controller
    */
   public function show(Role $role)
   {
-    //
+    return view('pages.roles.show', compact('role'));
   }
 
   /**
@@ -84,7 +74,13 @@ class RoleController extends Controller
    */
   public function edit(Role $role)
   {
-    //
+    $permissions = Permission::get();
+    $data = $role->permissions->pluck('id');
+    $rolePermissions = [];
+    foreach ($data as $p) {
+      $rolePermissions[] = $p;
+    }
+    return view('pages.roles.edit', compact('role', 'permissions', 'rolePermissions'));
   }
 
   /**
@@ -96,7 +92,16 @@ class RoleController extends Controller
    */
   public function update(Request $request, Role $role)
   {
-    //
+    $this->validate($request, [
+      'name' => 'required|unique:roles,name,' . $role->id
+    ]);
+
+    $role->name = $request->input('name');
+    $role->save();
+    $role->syncPermissions($request->input('permission'));
+
+    flash()->addSuccess('Role Updated');
+    return redirect()->route('roles.index');
   }
 
   /**
@@ -107,6 +112,10 @@ class RoleController extends Controller
    */
   public function destroy(Role $role)
   {
-    //
+    if ($role->name != 'Super Admin') {
+      $role->delete();
+      flash()->addSuccess('Role Deleted');
+    }
+    return back();
   }
 }

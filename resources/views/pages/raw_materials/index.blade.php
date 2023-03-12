@@ -47,9 +47,6 @@
       $('#submit-btn').click(function(e) {
         // e.preventDefault();
 
-        // csrf bind
-        // var token = $("meta[name='csrf-token']").attr("content");
-
         let myform = document.getElementById('raw_insert_form');
         let formData = new FormData(myform);
 
@@ -61,7 +58,7 @@
           contentType: false,
           type: 'POST',
           success: function(response) {
-            console.log(response)
+            // console.log(response)
             // clear type list
             $('#errors').html('');
             var content = '';

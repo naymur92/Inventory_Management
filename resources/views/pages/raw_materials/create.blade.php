@@ -12,7 +12,7 @@
       function get_types() {
         var val = $('#_name').val();
 
-        // csrf bind
+        // get csrf
         var token = $("meta[name='csrf-token']").attr("content");
 
         $.post("/raw-materials/get-item-types", {
