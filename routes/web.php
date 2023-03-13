@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FinishModuleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductionMaterialController;
+use App\Http\Controllers\ProductionMaterialRequestController;
 use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\RawMaterialRequestController;
 use App\Http\Controllers\RoleController;
@@ -45,8 +46,11 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/raw-mat-req/queue-list', [RawMaterialRequestController::class, 'queue_list'])->name('raw-material-requests.queue-list');
   Route::put('/raw-mat-req/confirmation/{id}', [RawMaterialRequestController::class, 'confirmation'])->name('raw-material-requests.confirmation');
 
-  // final module
-  Route::resource('finish-modules', FinishModuleController::class);
+  // production Materials
+  Route::resource('production-materials', ProductionMaterialController::class);
+
+  // production Material Requests
+  Route::resource('production-material-requests', ProductionMaterialRequestController::class);
 });
 
 Auth::routes();

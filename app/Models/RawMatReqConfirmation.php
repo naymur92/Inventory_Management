@@ -23,9 +23,4 @@ class RawMatReqConfirmation extends Model
     {
         return $this->belongsTo(related: User::class, foreignKey: 'user_id');
     }
-
-    public function raw_material_request()
-    {
-        return $this->belongsTo(related: RawMaterialRequest::class, foreignKey: 'raw_material_request_id');
-    }
 }

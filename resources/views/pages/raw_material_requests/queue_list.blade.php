@@ -55,19 +55,19 @@
             <tbody>
               @foreach ($raw_mat_reqs as $item)
                 <tr>
-                  <td>{{ $item->raw_material_request->raw_material->material_name }}</td>
-                  <td>{{ $item->raw_material_request->raw_material->material_type }}</td>
-                  <td>{{ $item->raw_material_request->raw_material_quantity }}
-                    ({{ $item->raw_material_request->raw_material->quantity_unit }})
+                  <td>{{ $item->request->raw_material->material_name }}</td>
+                  <td>{{ $item->request->raw_material->material_type }}</td>
+                  <td>{{ $item->request->raw_material_quantity }}
+                    ({{ $item->request->raw_material->quantity_unit }})
                   </td>
                   <td>
-                    <strong>Name: </strong>{{ $item->raw_material_request->requested_user->name }} <br>
-                    <strong>Email: </strong>{{ $item->raw_material_request->requested_user->email }}
+                    <strong>Name: </strong>{{ $item->request->requested_user->name }} <br>
+                    <strong>Email: </strong>{{ $item->request->requested_user->email }}
                   </td>
                   <td>
                     <label class="badge badge-warning">{{ $status[$item->status] }}</label>
                   </td>
-                  <td>{{ date('d M, Y - h:i a', strtotime($item->raw_material_request->created_at)) }}</td>
+                  <td>{{ date('d M, Y - h:i a', strtotime($item->request->created_at)) }}</td>
                   <td>
                     <div class="dropdown">
                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"

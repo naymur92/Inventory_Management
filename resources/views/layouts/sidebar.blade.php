@@ -55,6 +55,8 @@ function isActive($routeName)
       <span>Dashboard</span></a>
   </li>
 
+  <!-- Divider -->
+  <hr class="sidebar-divider my-0">
 
   {{-- Nav item -users --}}
   @canany(['user-edit', 'user-list', 'user-create', 'user-delete'])
@@ -103,6 +105,9 @@ function isActive($routeName)
     </li>
   @endcanany
 
+  <!-- Divider -->
+  <hr class="sidebar-divider my-0">
+
   {{-- Nav item - Raw Materials --}}
   @canany(['material-edit', 'material-list', 'material-create', 'material-delete', 'raw-req-list', 'raw-req-create',
     'raw-req-edit', 'raw-req-delete', 'raw-req-confirm'])
@@ -133,12 +138,12 @@ function isActive($routeName)
             @endcan
             @can('raw-req-list')
               <a class="collapse-item {{ isActive('raw-material-requests.index') }}"
-                href="{{ route('raw-material-requests.index') }}"><i class="fa fa-list mr-2 text-primary"></i>Requests
-                List</a>
+                href="{{ route('raw-material-requests.index') }}"><i class="fas fa-history mr-2"></i>Request
+                History</a>
             @endcan
           @endcanany
 
-          {{-- users only have raw-req-confirm and raw-req-delete permissions can show this --}}
+          {{-- users only have raw-req-confirm permission can show this --}}
           @canany(['raw-req-confirm'])
             <a class="collapse-item {{ isActive('raw-material-requests.queue-list') }}"
               href="{{ route('raw-material-requests.queue-list') }}"><i class="fas fa-list mr-2 text-warning"></i>Queue
@@ -149,26 +154,53 @@ function isActive($routeName)
     </li>
   @endcanany
 
-  {{-- Nav item - Finish Modules --}}
-  <li class="nav-item {{ isActiveLI('finish-modules') }}">
-    <a class="nav-link {{ isCollapsed(['finish-modules']) }}" href="#" data-toggle="collapse"
-      data-target="#finishModulesMenu" aria-expanded="true" aria-controls="finishModulesMenu">
-      <i class="fas fa-check"></i>
-      <span>Finish Modules</span>
-    </a>
-    <div id="finishModulesMenu" class="collapse {{ isShow('finish-modules') }}" aria-labelledby="headingTwo"
-      data-parent="#accordionSidebar">
-      <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Finish Module Components:</h6>
-        <a class="collapse-item {{ isActive('finish-modules.index') }}" href="{{ route('finish-modules.index') }}"><i
-            class="fas fa-warehouse mr-2 text-primary"></i>Inventory</a>
-        <a class="collapse-item {{ isActive('finish-modules.index') }}" href="{{ route('finish-modules.index') }}"><i
-            class="fas fa-plus mr-2 text-primary"></i>Create Finish Request</a>
-        <a class="collapse-item {{ isActive('finish-modules.create') }}"
-          href="{{ route('finish-modules.create') }}"><i class="fas fa-list mr-2 text-success"></i>Queue List</a>
+  {{-- Nav item - Production Materials --}}
+  @canany(['production-edit', 'production-list', 'production-create', 'production-delete', 'production-req-list',
+    'production-req-create', 'production-req-edit', 'production-req-delete', 'production-req-confirm'])
+    <li class="nav-item {{ isActiveLI('production-materials') }} {{ isActiveLI('production-material-requests') }}">
+      <a class="nav-link {{ isCollapsed(['production-materials', 'production-material-requests']) }}" href="#"
+        data-toggle="collapse" data-target="#productionMatMenu" aria-expanded="true" aria-controls="productionMatMenu">
+        <i class="fas fa-industry"></i>
+        <span>Production Materials</span>
+      </a>
+      <div id="productionMatMenu"
+        class="collapse {{ isShow('production-materials') }} {{ isShow('production-material-requests') }}"
+        aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Prod Mat Components:</h6>
+
+          {{-- Check Production Material Component permissions --}}
+          @canany(['production-edit', 'production-list', 'production-create', 'production-delete'])
+            <a class="collapse-item {{ isActive('production-materials.index') }}"
+              href="{{ route('production-materials.index') }}"><i
+                class="fas fa-warehouse mr-2 text-primary"></i>Inventory</a>
+          @endcanany
+
+          {{-- check Production mat request permissions --}}
+          @canany(['production-req-edit', 'production-req-list', 'production-req-create', 'production-req-delete'])
+            @can('production-req-create')
+              <a class="collapse-item {{ isActive('production-material-requests.create') }}"
+                href="{{ route('production-material-requests.create') }}"><i
+                  class="fas fa-plus-square mr-2 text-success"></i>Create Request</a>
+            @endcan
+            @can('production-req-list')
+              <a class="collapse-item {{ isActive('production-material-requests.index') }}"
+                href="{{ route('production-material-requests.index') }}"><i class="fas fa-history mr-2"></i>Request
+                History</a>
+            @endcan
+          @endcanany
+
+          {{-- users only have production-req-confirm permission can show this --}}
+          @canany(['production-req-confirm'])
+            <a class="collapse-item {{ isActive('production-material-requests.queue-list') }}"
+              href="{{ route('production-material-requests.queue-list') }}"><i
+                class="fas fa-list mr-2 text-warning"></i>Queue
+              List</a>
+          @endcanany
+        </div>
       </div>
-    </div>
-  </li>
+    </li>
+  @endcanany
 
   <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block">
