@@ -17,7 +17,7 @@ class CreateRawMaterialsTable extends Migration
       $table->id();
       $table->string('material_name');
       $table->string('material_type');
-      $table->unsignedInteger('material_quantity');
+      $table->unsignedDecimal('material_quantity', 10, 2);
       $table->string('quantity_unit');
       $table->string('req_handler_role');
       $table->timestamps();

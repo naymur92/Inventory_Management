@@ -51,6 +51,9 @@ Route::group(['middleware' => ['auth']], function () {
 
   // production Material Requests
   Route::resource('production-material-requests', ProductionMaterialRequestController::class);
+  Route::post('/production-material-requests/get-pac-sizes', [ProductionMaterialRequestController::class, 'get_pac_sizes']);
+  Route::get('/prod-mat-req/queue-list', [ProductionMaterialRequestController::class, 'queue_list'])->name('production-material-requests.queue-list');
+  Route::put('/prod-mat-req/confirmation/{id}', [ProductionMaterialRequestController::class, 'confirmation'])->name('production-material-requests.confirmation');
 });
 
 Auth::routes();

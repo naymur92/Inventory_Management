@@ -15,4 +15,14 @@ class ProductionMaterial extends Model
     {
         return $this->hasMany(related: ProductionMaterialRequest::class, foreignKey: 'production_material_id');
     }
+
+    public function productions()
+    {
+        return $this->hasMany(related: ProductionMaterial::class, foreignKey: 'raw_material_id');
+    }
+
+    public function raw_material()
+    {
+        return $this->belongsTo(related: RawMaterial::class, foreignKey: 'raw_material_id');
+    }
 }

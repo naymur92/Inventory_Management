@@ -190,12 +190,14 @@ class RawMaterialRequestController extends Controller
       $raw_material->material_quantity += $material_quantity;
       $raw_material->updated_at = now();
       $raw_material->save();
+
+      flash()->addSuccess('Quantity Updated');
     }
 
     if ($status == 2) {
       flash()->addWarning('Request Cancelled');
     } else {
-      flash()->addSuccess('Request Confirmed and Quantity Updated');
+      flash()->addSuccess('Request Confirmed');
     }
 
     return back();

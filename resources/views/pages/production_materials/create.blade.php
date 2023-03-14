@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Request Raw Material')
+@section('title', 'Create Production Material')
 
 @push('styles')
 @endpush
 
 @push('scripts')
-  <script>
+  {{-- <script>
     $(document).ready(function() {
       // function for get type list as per item names
       function get_types() {
@@ -15,13 +15,13 @@
         // csrf bind
         var token = $("meta[name='csrf-token']").attr("content");
 
-        $.post("/raw-material-requests/get-item-types", {
+        $.post("/production-materials/get-item-types", {
             material_name: val,
             _token: token
           },
           function(data, status) {
             if (data.success) {
-              // console.log(data.unit)
+              console.log(data.unit)
               // clear type list
               $('#_type').html('');
               $('.qty_unit').html('');
@@ -49,42 +49,42 @@
         get_types();
       });
     });
-  </script>
+  </script> --}}
 @endpush
 
 @section('content')
   <div class="container-fluid">
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Request Raw Material</h1>
+    <h1 class="h3 mb-2 text-gray-800">Production Material</h1>
 
     <div class="row justify-content-center">
       <div class="col-6">
         <div class="card shadow mb-4">
           <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h5 class="m-0 font-weight-bold text-primary">Raw Material Request Form</h5>
-            @can('raw-req-list')
-              <a href="{{ route('raw-material-requests.index') }}" class="btn btn-outline-warning">Back</a>
+            <h5 class="m-0 font-weight-bold text-primary">Production Material Creation Form</h5>
+            @can('production-list')
+              <a href="{{ route('production-materials.index') }}" class="btn btn-outline-warning">Back</a>
             @endcan
           </div>
 
-          <form action="{{ route('raw-material-requests.store') }}" method="POST">
+          <form action="{{ route('production-materials.store') }}" method="POST">
             @csrf
             <div class="card-body">
 
               <div class="form-group">
-                <label for="_name"><strong>Select Item:</strong></label>
-                <select name="material_name" id="_name"
-                  class="form-control @error('material_name') is-invalid @enderror">
+                <label for="_raw_mat_id"><strong>Select Material:</strong></label>
+                <select name="raw_material_id" id="_raw_mat_id"
+                  class="form-control @error('raw_material_id') is-invalid @enderror">
                   <option value="" selected disabled>Select One</option>
 
-                  @foreach ($item_list as $item)
-                    <option value="{{ $item->material_name }}"
-                      {{ old('material_name') == $item->material_name ? 'selected' : '' }}>{{ $item->material_name }}
+                  @foreach ($raw_materials as $item)
+                    <option value="{{ $item->id }}" {{ old('raw_material_id') == $item->id ? 'selected' : '' }}>
+                      {{ ucwords($item->material_type) }} {{ ucwords($item->material_name) }}
                     </option>
                   @endforeach
                 </select>
 
-                @error('material_name')
+                @error('raw_material_id')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                   </span>
@@ -92,13 +92,15 @@
               </div>
 
               <div class="form-group">
-                <label for="_type"><strong>Select Type:</strong></label>
-                <select name="material_type" id="_type"
-                  class="form-control @error('material_type') is-invalid @enderror">
+                <label for="_pac_size"><strong>Select Pac Size:</strong></label>
+                <select name="pac_size" id="_pac_size" class="form-control @error('pac_size') is-invalid @enderror">
                   <option value="" selected disabled>Select One</option>
+                  <option value="1">1 ltr</option>
+                  <option value="2">2 ltr</option>
+                  <option value="5">5 ltr</option>
                 </select>
 
-                @error('material_type')
+                @error('pac_size')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                   </span>
@@ -106,11 +108,18 @@
               </div>
 
               <div class="form-group">
-                <label for="_qty"><strong>Enter Quantity (<span class="qty_unit"></span>):</strong></label>
-                <input type="number" id="_qty" name="material_quantity" value="{{ old('material_quantity') }}"
-                  class="form-control @error('material_quantity') is-invalid @enderror" placeholder="Enter Quantity">
+                <label for="_req_handler"><strong>Select Request Handler Role:</strong></label>
+                <select name="req_handler_role" id="_req_handler"
+                  class="form-control @error('req_handler_role') is-invalid @enderror">
+                  <option value="" selected disabled>Select One</option>
+                  @foreach ($roles as $item)
+                    <option value="{{ $item }}" {{ old('req_handler_role') == $item ? 'selected' : '' }}>
+                      {{ $item }}
+                    </option>
+                  @endforeach
+                </select>
 
-                @error('material_quantity')
+                @error('req_handler_role')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                   </span>

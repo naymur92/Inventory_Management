@@ -17,7 +17,7 @@ class CreateProductionMatReqConfirmationsTable extends Migration
       $table->id();
       $table->unsignedBigInteger('prod_mat_req_id');
       $table->unsignedBigInteger('user_id');
-      $table->string('status');
+      $table->string('status')->default(0)->comment('0=pending, 1=confirmed, 2=cancelled');
       $table->timestamp('confirmed_at')->nullable();
 
       $table->foreign('prod_mat_req_id')->references('id')->on('production_material_requests')->onDelete('cascade');

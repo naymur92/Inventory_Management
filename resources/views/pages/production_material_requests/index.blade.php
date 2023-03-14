@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Raw Material Request List')
+@section('title', 'Production Material Request List')
 
 
 @push('styles')
@@ -20,14 +20,14 @@
 @section('content')
   <div class="container-fluid">
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Raw Material Request</h1>
+    <h1 class="h3 mb-2 text-gray-800">Production Material Request</h1>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3 d-flex justify-content-between">
-        <h5 class="m-0 font-weight-bold text-primary">Raw Material Request List</h5>
-        @can('raw-req-create')
-          <a href="{{ route('raw-material-requests.create') }}" class="btn btn-primary">Create A Request</a>
+        <h5 class="m-0 font-weight-bold text-primary">Production Material Request List</h5>
+        @can('production-req-create')
+          <a href="{{ route('production-material-requests.create') }}" class="btn btn-primary">Create A Request</a>
         @endcan
       </div>
       <div class="card-body">
@@ -36,7 +36,7 @@
             <thead>
               <tr>
                 <th>Material Name</th>
-                <th>Type</th>
+                <th>Pack Size</th>
                 <th>Quantity</th>
                 <th>Requested By</th>
                 <th>Status</th>
@@ -47,7 +47,7 @@
             <tfoot>
               <tr>
                 <th>Material Name</th>
-                <th>Type</th>
+                <th>Pack Size</th>
                 <th>Quantity</th>
                 <th>Requested By</th>
                 <th>Status</th>
@@ -56,11 +56,12 @@
               </tr>
             </tfoot>
             <tbody>
-              @foreach ($raw_mat_reqs as $item)
+              @foreach ($prod_mat_reqs as $item)
                 <tr>
-                  <td>{{ $item->raw_material->material_name }}</td>
-                  <td>{{ $item->raw_material->material_type }}</td>
-                  <td>{{ $item->raw_material_quantity }} ({{ $item->raw_material->quantity_unit }})</td>
+                  <td>{{ $item->production_material->material_name }}</td>
+                  <td>{{ $item->production_material->pac_size }} ltr</td>
+                  <td>{{ $item->production_material_quantity }}
+                    {{ $item->production_material_quantity > 1 ? 'pieces' : 'piece' }}</td>
                   <td>
                     <strong>Name: </strong>{{ $item->requested_user->name }} <br>
                     <strong>Email: </strong>{{ $item->requested_user->email }}
@@ -86,7 +87,7 @@
                         Action
                       </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('raw-material-requests.show', $item->id) }}"><i
+                        <a class="dropdown-item" href="{{ route('production-material-requests.show', $item->id) }}"><i
                             class="fa fa-eye text-primary"></i> View</a>
 
                         <?php
@@ -98,8 +99,8 @@
                         }
                         ?>
                         @if (!$confirmation || count($item->req_confirmations) == 0)
-                          @can('raw-req-delete')
-                            <form action="{{ route('raw-material-requests.destroy', $item->id) }}"
+                          @can('production-req-delete')
+                            <form action="{{ route('production-material-requests.destroy', $item->id) }}"
                               onsubmit="return confirm('Are you want to sure to delete?')" method="post">
                               @csrf
                               @method('delete')

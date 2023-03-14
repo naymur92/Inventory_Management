@@ -18,7 +18,7 @@ class CreateProductionMaterialsTable extends Migration
       $table->string('material_name');
       $table->unsignedBigInteger('raw_material_id');
       $table->unsignedTinyInteger('pac_size')->comment('1 => 1 ltr, 2 => 2 ltr, 5 => 5 ltr, etc.');
-      $table->unsignedMediumInteger('material_quantity')->comment('quantity in piece');
+      $table->unsignedMediumInteger('material_quantity')->default(0)->comment('quantity in piece');
       $table->string('req_handler_role');
       $table->timestamps();
 

@@ -18,7 +18,7 @@ class CreateProductionMaterialRequestsTable extends Migration
       $table->unsignedBigInteger('production_material_id');
       $table->unsignedMediumInteger('production_material_quantity')->comment('quantity in piece');
       $table->unsignedBigInteger('requested_by');
-      $table->unsignedBigInteger('cancelled_by');
+      $table->unsignedBigInteger('cancelled_by')->nullable();
       $table->timestamps();
 
       $table->foreign('production_material_id')->references('id')->on('production_materials')->onDelete('cascade');
